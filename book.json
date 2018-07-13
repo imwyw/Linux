@@ -1,0 +1,46 @@
+{
+    "title": "linux",
+    "author": "Wang Yuanwei <now_way@126.com>",
+    "description": "linux",
+    "language": "zh-hans",
+    "gitbook": ">=3.0.0",
+    "plugins": [
+        "anchors",
+        "multipart",
+        "-search",
+        "-lunr",
+        "search-plus",
+        "-sharing",
+        "splitter",
+        "sectionx",
+        "anchor-navigation-ex",
+        "copy-code-button"
+    ],
+    "pluginsConfig": {
+        "theme-default": {
+            "showLevel": false
+        },
+        "sectionx": {
+            "tag": "b"
+        },
+        "anchor-navigation-ex": {
+            "showLevel": true,
+            "associatedWithSummary": true,
+            "printLog": false,
+            "multipleH1": true,
+            "mode": "float",
+            "float": {
+                "showLevelIcon": false,
+                "level1Icon": "fa fa-hand-o-right",
+                "level2Icon": "fa fa-hand-o-right",
+                "level3Icon": "fa fa-hand-o-right"
+            },
+            "pageTop": {
+                "showLevelIcon": false,
+                "level1Icon": "fa fa-hand-o-right",
+                "level2Icon": "fa fa-hand-o-right",
+                "level3Icon": "fa fa-hand-o-right"
+            }
+        }
+    }
+}
