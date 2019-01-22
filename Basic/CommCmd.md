@@ -11,6 +11,8 @@
         - [rm删除](#rm删除)
     - [文件拷贝](#文件拷贝)
         - [windows2linux](#windows2linux)
+            - [利用putty相关工具](#利用putty相关工具)
+            - [secureCRT或者xshell中使用命令rz/sz](#securecrt或者xshell中使用命令rzsz)
     - [软件安装](#软件安装)
         - [.tar.gz文件和.rpm文件的区别](#targz文件和rpm文件的区别)
             - [*.rpm形式的二进制软件包](#rpm形式的二进制软件包)
@@ -27,7 +29,8 @@
 <a id="markdown-启动级别" name="启动级别"></a>
 ## 启动级别
 Linux下是使用0到6来表示不同的启动模式的，每个数字代表的含义如下：
-```
+
+```shell
 0 ：系统正常启动然后关机 
 1 ：单用户模式 
 2 ：多用户模式，没有NFS 
@@ -43,7 +46,8 @@ Linux下是使用0到6来表示不同的启动模式的，每个数字代表的�
 3.在默认的 run level 设置中,可以看到第一行书写如:id:5:initdefault:(默认的 run level 等级为 5,即图形界面)，将5修改为3重启即可；
 
 * 运行时
-```
+
+```shell
 #切换到图形
 init 5
 #切换到命令行
@@ -55,17 +59,23 @@ init 3
 
 <a id="markdown-显示各类信息" name="显示各类信息"></a>
 ## 显示各类信息
-```
-# 显示简略信息
+
+```shell
+#显示简略信息
 ls
-# 显示权限
+
+#显示权限
 ls -l = ls -lrt = ll
-# 显示权限包含隐藏文件
+
+#显示权限包含隐藏文件
 ls -la
-# 显示路径
+
+#显示路径
 pwd
+
 #CentOS常用到的查看系统命令
 uname -a
+
 # 查看内核/操作系统/CPU信息
 head -n 1 /etc/issue   # 查看操作系统版本
 cat /proc/cpuinfo      # 查看CPU信息
@@ -98,6 +108,7 @@ route -n               # 查看路由表
 netstat -lntp          # 查看所有监听端口
 netstat -antp          # 查看所有已经建立的连接
 netstat -s             # 查看网络统计信息 
+ip addr show           # 显示网卡地址
  
 #进程
 ps -ef                 # 查看所有进程
@@ -125,47 +136,88 @@ vi /etc/hosts #网络配置
 
 <a id="markdown-chmod" name="chmod"></a>
 ## chmod
+
+```shell
 最大权限
 chmod 777 filename #最大权限
 chmod u+x cloudera-manager-installer.bin #权限为可执行
 chmod -R u+x /var/www/html/cdh/cm5.2.0/package #递归处理文件和文件夹权限
+```
 
 <a id="markdown-linux文件的复制删除和移动命令" name="linux文件的复制删除和移动命令"></a>
 ## Linux文件的复制、删除和移动命令
+
 <a id="markdown-cp复制" name="cp复制"></a>
 ### cp复制
 cp [选项] 源文件或目录 目标文件或目录
+
 <a id="markdown-mv移动" name="mv移动"></a>
 ### mv移动
+
+```shell
 mv [选项] 源文件或目录 目标文件或目录
+
 mv cdh5.5.2/ cdh/ #文件夹【cdh5.5.2】更名为【cdh】
+```
+
 <a id="markdown-rm删除" name="rm删除"></a>
 ### rm删除
+
 rm [选项] 文件…
+
 如果没有使用 -r 选项，则rm不会删除目录。该命令的各选项含义如下：
+
 　　-f 忽略不存在的文件，从不给出提示。
+
 　　-r 指示rm将参数中列出的全部目录和子目录均递归地删除。
+
 　　-i 进行交互式删除。
-　　使用rm命令要格外小心。因为一旦一个文件被删除，它是不能被恢复的。例如，用户在输入cp，mv或其他命令时，不小心误输入了rm命令，当用户按了回车键并认识到自己的错误时，已经太晚了，文件已经没有了。为了防止此种情况的发生，可以使用rm命令中的 i选项来确认要删除的每个文件。如果用户输入y，文件将被删除。如果输入任何其他东西，文件将被保留。在下一个例子中，用户要删除文件test和example。然后会被要求对每个文件进行确认。用户最终决定删除example文件，保留test文件。
-　　$ rm - ii test example Remove test ?n
-　　Remove example ?y
+
+　　使用rm命令要格外小心。因为一旦一个文件被删除，它是不能被恢复的。
+
+例如，用户在输入cp，mv或其他命令时，不小心误输入了rm命令，当用户按了回车键并认识到自己的错误时，已经太晚了，文件已经没有了。
+
+为了防止此种情况的发生，可以使用rm命令中的 i选项来确认要删除的每个文件。
+
+如果用户输入y，文件将被删除。如果输入任何其他东西，文件将被保留。在下一个例子中，用户要删除文件test和example。
+
+然后会被要求对每个文件进行确认。用户最终决定删除example文件，保留test文件。
+
+```shell
+$ rm - ii test example Remove test ?n
+Remove example ?y
 rm -rf xxxx 无提示删除
+```
 
 <a id="markdown-文件拷贝" name="文件拷贝"></a>
 ## 文件拷贝
+
 <a id="markdown-windows2linux" name="windows2linux"></a>
 ### windows2linux
-* 利用putty相关工具
-pscp.exe拷入C:\Windows\System32，可以在命令提示符(cmd)中执行pscp命令
-C:\Users\Administrator>pscp D:\BaiduNetdiskDownload\jdk-7u9-linux-x64.rpm root@192.168.194.129:/usr/software
 
-* secureCRT中使用命令rz/sz
+<a id="markdown-利用putty相关工具" name="利用putty相关工具"></a>
+#### 利用putty相关工具
+
+pscp.exe拷入C:\Windows\System32，可以在命令提示符(cmd)中执行pscp命令
+
+```
+C:\Users\Administrator>pscp D:\BaiduNetdiskDownload\jdk-7u9-linux-x64.rpm root@192.168.194.129:/usr/software
+```
+
+<a id="markdown-securecrt或者xshell中使用命令rzsz" name="securecrt或者xshell中使用命令rzsz"></a>
+#### secureCRT或者xshell中使用命令rz/sz
 send和received，站在服务端角度考虑
+
 linux端需要安装lrzsz插件
+```shell
 yum -y install lrzsz
+```
+
+rz即传文件至远端，sz即从远端接收文件。
 
 <a id="markdown-软件安装" name="软件安装"></a>
 ## 软件安装
+
 <a id="markdown-targz文件和rpm文件的区别" name="targz文件和rpm文件的区别"></a>
 ### .tar.gz文件和.rpm文件的区别
 Linux软件的二进制分发是指事先已经编译好二进制形式的软件包的发布形式，其优点是安装使用容易，缺点则是缺乏灵活性，如果该软件包是为特定的硬件/操作系统平台编译的，那它就不能在另外的平台或环境下正确执行。 
@@ -186,7 +238,8 @@ Linux软件的二进制分发是指事先已经编译好二进制形式的软件
 
 <a id="markdown-rpm" name="rpm"></a>
 ### rpm
-```
+
+```shell
 #搜索
 rpm -q....
 rpm -qa|grep java
@@ -203,9 +256,11 @@ rpm -Uvh example.rpm 升级 example.rpm 软件包
 rpm -e 需要卸载的安装包
 rpm -e --nodeps java-1.7.0-openjdk-1.7.0.121-2.6.8.1.el6_8.x86_64
 ```
+
 <a id="markdown-yum" name="yum"></a>
 ### yum
-```
+
+```shell
 #搜索
 yum search java
 #列出所有可安装的软件包
@@ -220,13 +275,15 @@ yum -y remove tzdata-java.noarch  #卸载tzdata-java
 #修改yum源配置
 vi /etc/yum.repos.d/Centos.repo
 ```
+
 * 修改来源为国内
 >http://xtgly.blog.51cto.com/3159418/1595977
 
 
 <a id="markdown-chkconfig" name="chkconfig"></a>
 ## chkconfig
-```
+
+```shell
 #自动启动mysql
 chkconfig mysqld on
 chkconfig mysqld off
@@ -235,11 +292,3 @@ chkconfig –add postfix
 #如果要查询当前所有自动启动的服务
 chkconfig --list 
 ```
-
-
-
-
-
-
-
-
