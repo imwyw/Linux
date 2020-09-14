@@ -2,6 +2,7 @@
 
 - [开发相关环境](#开发相关环境)
   - [JDK配置](#jdk配置)
+  - [tomcat配置](#tomcat配置)
 
 <!-- /TOC -->
 
@@ -47,5 +48,28 @@ source /etc/profile
 # 测试环境
 java -version
 ```
+
+<a id="markdown-tomcat配置" name="tomcat配置"></a>
+## tomcat配置
+
+> https://tomcat.apache.org/download-90.cgi 
+
+下载安装包，拷贝至 【/usr/local/software】，解压至lib目录：
+
+```bash
+tar -zxvf apache-tomcat-9.0.37.tar.gz -C /usr/lib/
+```
+
+执行【startup.sh】
+
+```bash
+# 打开 bin 目录
+cd /usr/lib/apache-tomcat-9.0.37/bin/
+
+# 启动Tomcat
+./startup.sh
+```
+
+> https://blog.csdn.net/lcyaiym/article/details/76696192
 
 
