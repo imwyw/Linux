@@ -1,25 +1,28 @@
 <!-- TOC -->
 
 - [基本操作](#基本操作)
-    - [启动级别](#启动级别)
-    - [本机WMware连接方式](#本机wmware连接方式)
-    - [显示各类信息](#显示各类信息)
-    - [chmod](#chmod)
-    - [Linux文件的复制、删除和移动命令](#linux文件的复制删除和移动命令)
-        - [cp复制](#cp复制)
-        - [mv移动](#mv移动)
-        - [rm删除](#rm删除)
-    - [文件拷贝](#文件拷贝)
-        - [windows2linux](#windows2linux)
-            - [利用putty相关工具](#利用putty相关工具)
-            - [secureCRT或者xshell中使用命令rz/sz](#securecrt或者xshell中使用命令rzsz)
-    - [软件安装](#软件安装)
-        - [.tar.gz文件和.rpm文件的区别](#targz文件和rpm文件的区别)
-            - [*.rpm形式的二进制软件包](#rpm形式的二进制软件包)
-            - [*.tar.gz/*.tgz、*.bz2形式的二进制软件包](#targztgzbz2形式的二进制软件包)
-        - [rpm](#rpm)
-        - [yum](#yum)
-    - [chkconfig](#chkconfig)
+  - [启动级别](#启动级别)
+  - [本机WMware连接方式](#本机wmware连接方式)
+  - [显示各类信息](#显示各类信息)
+  - [chmod](#chmod)
+  - [Linux文件的复制、删除和移动命令](#linux文件的复制删除和移动命令)
+    - [cp复制](#cp复制)
+    - [mv移动](#mv移动)
+    - [rm删除](#rm删除)
+  - [文件拷贝](#文件拷贝)
+    - [windows2linux](#windows2linux)
+      - [利用putty相关工具](#利用putty相关工具)
+      - [secureCRT或者xshell中使用命令rz/sz](#securecrt或者xshell中使用命令rzsz)
+  - [软件安装](#软件安装)
+    - [.tar.gz文件和.rpm文件的区别](#targz文件和rpm文件的区别)
+      - [*.rpm形式的二进制软件包](#rpm形式的二进制软件包)
+      - [*.tar.gz/*.tgz、*.bz2形式的二进制软件包](#targztgzbz2形式的二进制软件包)
+    - [rpm](#rpm)
+    - [yum](#yum)
+  - [chkconfig](#chkconfig)
+  - [iptables防火墙](#iptables防火墙)
+  - [lrzsz文件操作](#lrzsz文件操作)
+  - [FTP](#ftp)
 
 <!-- /TOC -->
 
@@ -292,3 +295,109 @@ chkconfig –add postfix
 #如果要查询当前所有自动启动的服务
 chkconfig --list 
 ```
+
+<a id="markdown-iptables防火墙" name="iptables防火墙"></a>
+## iptables防火墙
+
+```bash
+# 查看防火墙状态
+service iptables status
+
+# 停止防火墙
+service iptables stop
+
+# 启动防火墙
+service iptables start
+
+# 重启防火墙
+service iptables restart
+
+# 永久关闭防火墙
+chkconfig iptables off
+
+# 永久关闭后重启
+chkconfig iptables on
+```
+
+<a id="markdown-lrzsz文件操作" name="lrzsz文件操作"></a>
+## lrzsz文件操作
+
+在linux里可代替ftp上传和下载。
+
+```bash
+yum -y install lrzsz
+```
+
+<a id="markdown-ftp" name="ftp"></a>
+## FTP
+
+安装ftp的前置条件是关掉SElinux
+
+```bash
+# vi /etc/selinux/config
+```
+
+修改 `SELINUX="disabled"` ,重启服务器。
+
+关闭防火墙，参考上一章节。
+
+安装命令：
+
+```bash
+yum install -y vsftpd
+```
+
+安装完成后，会生成一个目录 `/etc/vsftpd/` 和 `/var/ftp/` 两个重要的目录
+
+
+[/etc/vsftpd/] 目录下有四个文件
+
+```
+1. ftpusers 文件 指定哪些用户不能访问 ftp 服务，这些用户是指 Linux 系统用户还是包括虚拟用户？
+2. user_list 文件 用户列表，当 vsftpd 里 userlist_deny=NO 时，只允许这里的用户访问 ftp 服务，注意此时同时也检测 ftpusers 文件；当 vsftpd 里 userlist_deny=YES（默认） 时，不允许这里的用户 访问 ftp 服务
+3. vsftpd.conf 文件 是 vsftpd 的核心配置文件
+4. vsftpd_conf_migrate.sh 文件 是 vsftpd 操作的一些变量和设置脚本
+```
+
+[/var/ftp/] 目录则是默认情况下，匿名用户的根目录，也就是说默认情况下，匿名用户上传的文件将会放在这个目录下。
+
+核心配置文件有以下几个基础的配置项
+
+```
+anonymous_enable=YES 是否允许匿名登录
+
+local_enable=YES 是否允许本地账号(系统账号)登录
+
+write_enable=YES 是否运行上传操作，如果要运行上传那么就要开启这个配置
+
+listen=NO ftp服务的运行模式，=NO时表示xinetd模式；=YES时表示standlone模式。
+
+userlist_enable=YES 控制 user_list 的功能，在上面有提到其实际意义
+```
+
+操作FTP服务的命令
+
+```
+查看服务状态：service vsftpd status
+
+启动vsftpd服务：service vsftpd start
+
+停止vsftpd服务：service vsftpd stop
+
+重启vsftpd服务：service vsftpd restart
+```
+
+设置开机启动ftp服务
+
+
+
+
+
+
+
+
+
+
+
+
+
