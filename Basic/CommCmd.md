@@ -310,6 +310,8 @@ yum list
 #列出所有已安装的软件包
 yum list installed
 yum list installed |grep java #是否安装java环境
+# 更新
+yum update java
 #卸载
 yum -y remove
 yum -y remove java-1.7.0-openjdk* #卸载JDK相关文件
@@ -334,6 +336,19 @@ wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-
 # 第三步：运行yum makecache生成缓存
 yum makecache
 ```
+
+推荐几个非常棒的国内yum源，已经设置方法，网易163yum源、中科大的yum源、sohu的yum源、阿里云yum源、清华大学的 yum源、浙江大学的 yum源、中国科技大学yum源
+
+```
+网易163 yum源，安装方法查看：http://mirrors.163.com/.help/ 
+中科大的 yum源，安装方法查看：https://lug.ustc.edu.cn/wiki/mirrors/help 
+sohu的 yum源，安装方法查看: http://mirrors.sohu.com/help/ 
+阿里云的 yum源，安装方法查看: https://opsx.alibaba.com/mirror 
+清华大学的 yum源，安装方法查看: https://mirrors.tuna.tsinghua.edu.cn/ 
+浙江大学的 yum源，安装方法查看: http://mirrors.zju.edu.cn/ 
+中国科技大学yum源，安装方法查看: http://centos.ustc.edu.cn/
+```
+
 
 <a id="markdown-chkconfig系统服务" name="chkconfig系统服务"></a>
 ## chkconfig系统服务
