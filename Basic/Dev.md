@@ -15,6 +15,7 @@
 <a id="markdown-jdk配置" name="jdk配置"></a>
 ## JDK配置
 
+使用rz命令将离线jdk安装文件上传至【/usr/local/software】路径
 
 ```bash
 # 创建目录，-p 表示如果没有上级目录的话一并创建
@@ -76,11 +77,19 @@ cd /usr/lib/apache-tomcat-9.0.37/bin/
 > https://blog.csdn.net/lcyaiym/article/details/76696192
 
 
+```bash
+# CentOS 7.0默认使用的是firewall作为防火墙
+
+# 关闭firewall：
+systemctl stop firewalld.service #停止firewall
+systemctl disable firewalld.service #禁止firewall开机启动
+firewall-cmd --state #查看默认防火墙状态（关闭后显示 notrunning ，开启后显示 running ）
+```
+
 <a id="markdown-springboot部署" name="springboot部署"></a>
 ## springboot部署
 
 区分 war 和 jar 部署方式区别：
-
 
 > https://blog.csdn.net/weixin_39274753/article/details/81557501
 
@@ -146,15 +155,17 @@ uname -r
 <a id="markdown-docker安装" name="docker安装"></a>
 ## docker安装
 
-yum安装docker No package docker available
+yum 安装docker No package docker available
 
+yum 没有找到docker包，更新epel第三方软件库，运行命令：
 
-yum没有找到docker包，更新epel第三方软件库，运行命令：
-
+CentOS 6.x 版本
 ```bash
 wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
 
 yum install epel-release
+
+yum install -y yum-utils device-mapper-persistent-data lvm2
 
 yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
 
@@ -162,5 +173,20 @@ yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/d
 yum -y install docker-ce
 ```
 
+CentOS 7.x
+```bash
+# 安装必要的yum工具
+yum install -y yum-utils device-mapper-persistent-data lvm2
+
+# 添加软件源信息
+yum-config-manager --add-repo https://mirrors.ustc.edu.cn/docker-ce/linux/centos/docker-ce.repo
+```
+
 之后就可以愉快地安装了。
+
+```bash
+yum -y install docker-ce
+```
+
+
 
