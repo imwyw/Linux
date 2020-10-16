@@ -19,6 +19,13 @@
     - [修改yum源为阿里镜像](#修改yum源为阿里镜像)
   - [chkconfig系统服务](#chkconfig系统服务)
   - [iptables防火墙](#iptables防火墙)
+  - [find 查找](#find-查找)
+  - [tar压缩和解压](#tar压缩和解压)
+  - [服务进程](#服务进程)
+    - [centos6.x服务](#centos6x服务)
+    - [centos7+服务](#centos7服务)
+    - [进程端口](#进程端口)
+    - [快速定位路径](#快速定位路径)
 
 <!-- /TOC -->
 
@@ -192,8 +199,6 @@ rm -rf xxxx 无提示删除
 
 <a id="markdown-文件拷贝" name="文件拷贝"></a>
 ## 文件拷贝
-
-
 
 <a id="markdown-利用putty相关工具" name="利用putty相关工具"></a>
 ### 利用putty相关工具
@@ -386,4 +391,132 @@ chkconfig iptables off
 chkconfig iptables on
 ```
 
+<a id="markdown-find-查找" name="find-查找"></a>
+## find 查找
+
+```bash
+# 查找文件
+find -name 'filename' -type f
+
+# 查找目录
+find -name 'dirname' -type d
+```
+
+<a id="markdown-tar压缩和解压" name="tar压缩和解压"></a>
+## tar压缩和解压
+
+`tar [选项] 压缩包`
+
+```bash
+-x：解打包；
+-f：指定压缩包的文件名；
+-v：显示打包文件过程；
+-t：测试，就是不解打包，只是査看包中有哪些文件；
+-C 目录：指定解打包位置；
+```
+
+其实解打包和打包相比，只是把打包选项"-cvf"更换为"-xvf"。
+
+```bash
+# 打包命令
+tar -cvf 目标名称.tar 需要打包的目录/
+
+# 解打包到当前目录
+tar -xvf 目标名称.tar 
+
+# 解打包到指定目录
+tar -xvf 目标名称.tar -C 指定目录/
+```
+
+上述过程并不包含压缩，仅仅是打包，此处常用的选项有以下 2 个，分别是：
+
+```
+-z：压缩和解压缩 ".tar.gz" 格式；
+-j：压缩和解压缩 ".tar.bz2"格式。
+```
+
+```shell
+# 打包压缩，前面加 z
+tar -zcvf tmp.tar.gz tmp/
+
+# 解压缩和打包，也是前面加 z
+tar -zxvf tmp.tar.gz
+```
+
+
+<a id="markdown-服务进程" name="服务进程"></a>
+## 服务进程
+
+<a id="markdown-centos6x服务" name="centos6x服务"></a>
+### centos6.x服务
+
+```shell
+# 查看当前服务器所有服务
+service --status-all 
+
+# 查看当前所有正在运行的服务
+service --status-all | grep running
+
+# 查看指定服务运行状态如 httpd
+service --status-all | grep httpd
+service httpd status
+
+# 查看系统启动自启动的服务列表
+chkconfig --list
+```
+
+
+<a id="markdown-centos7服务" name="centos7服务"></a>
+### centos7+服务
+
+```shell
+# 查看正在运行的服务
+systemctl | grep running
+
+# 列出运行的服务
+initctl list
+
+# 查看指定服务运行状态
+systemctl | grep apache2
+
+# 查看正在运行的服务
+pstree
+
+# 查看正在运行的状态
+chkservice --是一个管理系统单元的终端工具
+```
+
+<a id="markdown-进程端口" name="进程端口"></a>
+### 进程端口
+
+```shell
+# 查看所有端口情况
+netstat -ant
+
+# 某个端口是否被占用
+netstat -tunlp | grep 端口号
+
+# 查看所有监听端口号
+netstat -lntp
+```
+
+<a id="markdown-快速定位路径" name="快速定位路径"></a>
+### 快速定位路径
+
+```shell
+# 列出服务和他们对应的端口
+netstat -tulpn
+
+# 通过 ps 找到端口对应的路径
+ps 1666
+```
+
+```shell
+# 查看jenkins状态
+ps -ef | grep jenkins
+```
+
+---
+
+[【Linux】开机自动启动脚本](https://www.cnblogs.com/h--d/p/9998788.html)
 
