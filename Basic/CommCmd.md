@@ -3,6 +3,8 @@
 - [基本操作](#基本操作)
   - [启动级别](#启动级别)
   - [本机WMware连接方式](#本机wmware连接方式)
+  - [网络配置](#网络配置)
+    - [IP地址](#ip地址)
   - [显示各类信息](#显示各类信息)
   - [chmod](#chmod)
   - [Linux文件的复制、删除和移动命令](#linux文件的复制删除和移动命令)
@@ -26,6 +28,7 @@
     - [centos7+服务](#centos7服务)
     - [进程端口](#进程端口)
     - [快速定位路径](#快速定位路径)
+  - [基本目录结构](#基本目录结构)
 
 <!-- /TOC -->
 
@@ -64,6 +67,32 @@ init 3
 ## 本机WMware连接方式
 
 设置NAT方式连接网络，配置虚拟机网络ip和物理机虚拟网卡ip在同网段可通信。
+
+<a id="markdown-网络配置" name="网络配置"></a>
+## 网络配置
+
+<a id="markdown-ip地址" name="ip地址"></a>
+### IP地址
+
+centos6+
+
+```shell
+# 查看
+ifconfig 
+
+# 修改ip
+vi /etc/sysconfig/network-scripts/ifcfg-eth0 
+```
+
+centos7不再使用ifconfig命令，可通过命令 IP addr查看
+
+```shell
+# 查看
+ip addr
+
+# 修改ip
+vi /etc/sysconfig/network-scripts/ifcfg-ens33
+```
 
 <a id="markdown-显示各类信息" name="显示各类信息"></a>
 ## 显示各类信息
@@ -159,6 +188,23 @@ chmod -R u+x /var/www/html/cdh/cm5.2.0/package #递归处理文件和文件夹�
 ### cp复制
 cp [选项] 源文件或目录 目标文件或目录
 
+```
+-a：此选项通常在复制目录时使用，它保留链接、文件属性，并复制目录下的所有内容。其作用等于dpR参数组合。
+-d：复制时保留链接。这里所说的链接相当于Windows系统中的快捷方式。
+-f：覆盖已经存在的目标文件而不给出提示。
+-i：与-f选项相反，在覆盖目标文件之前给出提示，要求用户确认是否覆盖，回答"y"时目标文件将被覆盖。
+-p：除复制文件的内容外，还把修改时间和访问权限也复制到新文件中。
+-r：若给出的源文件是一个目录文件，此时将复制该目录下所有的子目录和文件。
+-l：不复制文件，只是生成链接文件。
+```
+
+```shell
+cp [options] source dest
+
+# 包含文件夹内容，覆盖方式拷贝
+cp -rf 源路径 目标路径
+```
+
 <a id="markdown-mv移动" name="mv移动"></a>
 ### mv移动
 
@@ -239,10 +285,10 @@ rz即传文件至远端，sz即从远端接收文件。
 yum install -y vsftpd
 ```
 
-安装完成后，会生成一个目录 `/etc/vsftpd/` 和 `/var/ftp/` 两个重要的目录
+安装完成后，会生成 `/etc/vsftpd/` 和 `/var/ftp/` 两个重要的目录
 
 
-[/etc/vsftpd/] 目录下有四个文件
+[/etc/vsftpd/] 是配置目录，内有四个文件：
 
 ```
 1. ftpusers 文件 指定哪些用户不能访问 ftp 服务，这些用户是指 Linux 系统用户还是包括虚拟用户？
@@ -251,12 +297,29 @@ yum install -y vsftpd
 4. vsftpd_conf_migrate.sh 文件 是 vsftpd 操作的一些变量和设置脚本
 ```
 
-[/var/ftp/] 目录则是默认情况下，匿名用户的根目录，也就是说默认情况下，匿名用户上传的文件将会放在这个目录下。
+```shell
+vi /etc/vsftpd/vsftpd.conf
+``` 
 
-核心配置文件有以下几个基础的配置项
+修改配置开启匿名用户上传权限：
+
+```
+anon_upload_enable=YES
+```
+
+修改【pub】目录的操作权限，否则服务端无法创建文件
+
+```
+chmod 777 /var/ftp/pub
+```
+
+使用ftp作为用户，密码为空，匿名登录即可。
+
 
 ```
 anonymous_enable=YES 是否允许匿名登录
+
+anon_upload_enable=YES 允许匿名上传文件
 
 local_enable=YES 是否允许本地账号(系统账号)登录
 
@@ -266,6 +329,10 @@ listen=NO ftp服务的运行模式，=NO时表示xinetd模式；=YES时表示sta
 
 userlist_enable=YES 控制 user_list 的功能，在上面有提到其实际意义
 ```
+
+[/var/ftp/] 目录则是默认情况下，匿名用户的根目录，也就是说默认情况下，匿名用户上传的文件将会放在这个目录下。
+
+核心配置文件有以下几个基础的配置项
 
 操作FTP服务的命令
 
@@ -514,6 +581,32 @@ ps 1666
 ```shell
 # 查看jenkins状态
 ps -ef | grep jenkins
+```
+
+<a id="markdown-基本目录结构" name="基本目录结构"></a>
+## 基本目录结构
+
+个人文件一般可以放在/home目录；
+
+以下为linux下的基本目录结构和作用：
+```shell
+/ #根目录。
+/boot #引导程zhi序，内核等dao存放的目录。
+/sbin #超级用户可以使用的命令的存放目录。
+/bin #普通用户可以使用的命令的存放目录。
+/lib #根目录下的所程序的共享库目录。
+/dev #设备文件目录。
+/home #普通用户的目录（$HOME目录）
+/root #用户root的$HOME目录
+/etc #全局的配置文件存放目录。
+/usr #这个目录中包含了命令库文件和在通常操作中不会修改的文件。
+/proc #特殊文件目录。
+/opt #可择的文件目录。
+/mnt #临时挂载目录。
+/media #挂载的媒体设备目录。
+/var #内容经常变化的目录。
+/tmp #临时文件目录。
+/lost+found #恢复文件存放的位置。
 ```
 
 ---
