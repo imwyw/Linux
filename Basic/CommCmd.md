@@ -28,6 +28,9 @@
     - [centos7+服务](#centos7服务)
     - [进程端口](#进程端口)
     - [快速定位路径](#快速定位路径)
+    - [不挂起执行jar](#不挂起执行jar)
+    - [查看正在执行的java程序](#查看正在执行的java程序)
+    - [找到进程pid，杀死进程：](#找到进程pid杀死进程)
   - [基本目录结构](#基本目录结构)
 
 <!-- /TOC -->
@@ -581,6 +584,32 @@ ps 1666
 ```shell
 # 查看jenkins状态
 ps -ef | grep jenkins
+```
+
+<a id="markdown-不挂起执行jar" name="不挂起执行jar"></a>
+### 不挂起执行jar
+
+```shell
+nohup java -jar xxxxx.jar &
+```
+
+&：让命令在后台执行，终端退出后命令仍旧执行
+
+<a id="markdown-查看正在执行的java程序" name="查看正在执行的java程序"></a>
+### 查看正在执行的java程序
+
+```shell
+ps -aux | grep java
+```
+
+<a id="markdown-找到进程pid杀死进程" name="找到进程pid杀死进程"></a>
+### 找到进程pid，杀死进程：
+
+```shell
+# 可以理解为操作系统发送一个通知告诉应用主动关闭
+kill -15 PID
+# 是操作系统从内核级别强制杀死一个进程
+kill -9 PID
 ```
 
 <a id="markdown-基本目录结构" name="基本目录结构"></a>
