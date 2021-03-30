@@ -12,6 +12,7 @@
     - [安装流水线runner](#安装流水线runner)
     - [ci-yml配置](#ci-yml配置)
     - [jenkins](#jenkins)
+  - [svn-git迁移](#svn-git迁移)
   - [rpm](#rpm)
 
 <!-- /TOC -->
@@ -262,6 +263,64 @@ gitlab-runner verify --delete --name xxx
 ### jenkins
 
 https://blog.csdn.net/ruangong1203/article/details/73065410
+
+<a id="markdown-svn-git迁移" name="svn-git迁移"></a>
+## svn-git迁移
+由于服务器的变动和研发体系的建立，已有的svn仓库需要迁移至git版本管理，操作如下：
+
+1. 账号对应
+
+SVN使用的是用户账号展示的提交记录，但是git使用的是账号和邮箱进行人员确认的，因此我们需要使用将二者进行对应。
+
+新建文本文件【svn2git.txt】：
+
+```
+wangyuanwei=wangyuanwei <wangyuanwei@xxxx.com>
+zhangsan=zhangsan <zhangsan@xxxx.com>
+```
+
+等号左边是SVN账号，等号右边是Gitlab账号和邮箱信息（注意：svn中不存在的人员也得转换，否则报错）。
+
+2. git-svn命令拉取
+
+git内置了一个git-svn的工具，你可以用git-svn按照git的方式来管理svn项目
+
+`git svn clone "你的SVN项目的url" --no-metadata --authors-file="d:/svn2git.txt" 项目名 --username=xxx`
+
+其中`username`是svn中具有访问权限的账号，以下为真实案例迁移至gitlab仓库：
+
+```
+git svn clone "https://127.0.0.1:10443/svn/Domino" --no-metadata --authors-file="e:/git-svn/svn2git.txt" GitSvnDomino --username=wangyuanwei
+```
+
+从本机svn仓库到本机的【GitSvnDomino】仓库
+
+3. git-remote配置
+
+添加当前仓库的git用户名和邮箱信息：
+
+```
+git config --local user.name "wangyuanwei"
+git config --local user.email "wangyuanwei@cheryholding.com"
+```
+
+添加远程仓库信息：
+
+```
+git remote add origin http://192.168.217.100:10000/dev/gitsvndomino.git
+```
+
+4. gitlab push
+
+按规范操作，master分支应该是每个发布版本，develop是开发分支。
+
+在本地创建develop分支，并提交至服务端develop分支，服务端master分支不允许直接提交操作。
+
+![](../assets/Git/git-remote-develop-push.png)
+
+推送develop分支成功：
+
+![](../assets/Git/git-lab-domino.png)
 
 <a id="markdown-rpm" name="rpm"></a>
 ## rpm
