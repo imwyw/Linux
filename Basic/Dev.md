@@ -6,6 +6,13 @@
   - [springboot部署](#springboot部署)
   - [内核升级](#内核升级)
   - [docker安装](#docker安装)
+    - [离线安装docker-ce](#离线安装docker-ce)
+  - [gitlab](#gitlab)
+    - [修改端口号](#修改端口号)
+    - [安装流水线runner](#安装流水线runner)
+    - [ci-yml配置](#ci-yml配置)
+    - [jenkins](#jenkins)
+  - [rpm](#rpm)
 
 <!-- /TOC -->
 
@@ -187,6 +194,80 @@ yum-config-manager --add-repo https://mirrors.ustc.edu.cn/docker-ce/linux/centos
 ```bash
 yum -y install docker-ce
 ```
+
+<a id="markdown-离线安装docker-ce" name="离线安装docker-ce"></a>
+### 离线安装docker-ce
+
+> https://blog.csdn.net/GentleLin/article/details/90294324
+
+
+离线rmp包下载地址：
+
+> https://download.docker.com/linux/centos/7/aarch64/stable/Packages/
+
+<a id="markdown-gitlab" name="gitlab"></a>
+## gitlab
+
+gitlab-ce 离线下载地址：https://packages.gitlab.com/gitlab/gitlab-ce
+
+https://blog.csdn.net/a3512740/article/details/106620513
+
+超级管理员：`root/Admin@123`
+
+```shell
+gitlab-ctl reconfigure # 重新配置应用
+gitlab-ctl restart # 重启所有服务
+```
+
+<a id="markdown-修改端口号" name="修改端口号"></a>
+### 修改端口号
+默认端口号为80，可能会存在占用等情况，按如下修改端口，否则会出现502异常
+
+```shell
+external_url 'http://192.168.217.100:10000'
+
+unicorn['listen']='127.0.0.1'
+unicorn['port'] = 10000
+
+nginx['listen_addresses'] = ['*']
+nginx['listen_port'] = 10000
+```
+
+<a id="markdown-安装流水线runner" name="安装流水线runner"></a>
+### 安装流水线runner
+
+下载离线资源包： https://docs.gitlab.com/runner/install/linux-manually.html
+
+【gitlab-runner_amd64.rpm】依赖于git
+
+```shell
+# 查看各个 Runner 的状态
+gitlab-runner list
+
+# 按名称删除 runner
+gitlab-runner verify --delete --name xxx
+```
+
+<a id="markdown-ci-yml配置" name="ci-yml配置"></a>
+### ci-yml配置
+每次调剂或合并会出发pipeline（流水线）操作，该操作取决于【.gitlab-ci.yml】配置文件
+
+针对控制台型应用程序应使用：
+
+```yml
+
+```
+
+<a id="markdown-jenkins" name="jenkins"></a>
+### jenkins
+
+https://blog.csdn.net/ruangong1203/article/details/73065410
+
+<a id="markdown-rpm" name="rpm"></a>
+## rpm
+
+rmp包依赖下载：https://pkgs.org/
+
 
 
 
