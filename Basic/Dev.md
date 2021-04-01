@@ -14,6 +14,7 @@
     - [jenkins](#jenkins)
   - [svn-git迁移](#svn-git迁移)
   - [rpm](#rpm)
+  - [nodejs环境](#nodejs环境)
 
 <!-- /TOC -->
 
@@ -291,6 +292,12 @@ git内置了一个git-svn的工具，你可以用git-svn按照git的方式来管
 
 ```
 git svn clone "https://127.0.0.1:10443/svn/Domino" --no-metadata --authors-file="e:/git-svn/svn2git.txt" GitSvnDomino --username=wangyuanwei
+
+svn_address 即为待迁移svn的工程地址；
+–no-metadata 防止git拉取无用的SVN附加信息；
+–authors-file 指定用户映射文件，即第一步里生成的文件；
+local_dir 为本地存放该svn工程目录，若不存在，git会自行创建；
+–username 即为使用指定用户拉取代码，因此该用户必须要有拉取代码的权限。
 ```
 
 从本机svn仓库到本机的【GitSvnDomino】仓库
@@ -326,6 +333,38 @@ git remote add origin http://192.168.217.100:10000/dev/gitsvndomino.git
 ## rpm
 
 rmp包依赖下载：https://pkgs.org/
+
+<a id="markdown-nodejs环境" name="nodejs环境"></a>
+## nodejs环境
+
+下载地址：https://nodejs.org/en/download/
+
+在windows端解压为【node-v14.16.0-linux-x64.tar】tar包，否则还需要在centos端使用xz命令进行解压。
+
+上传该tar包至【/usr/nodejs】
+
+centos端执行命令：
+
+```
+tar -xf node-v14.16.0-linux-x64.tar
+```
+
+解包后，使用ln命令建立链接：
+
+```
+ln -s /usr/nodejs/node-v14.16.0-linux-x64/bin/node /usr/bin/node
+ln -s /usr/nodejs/node-v14.16.0-linux-x64/bin/node /usr/bin/npm
+ln -s /usr/nodejs/node-v14.16.0-linux-x64/bin/node /usr/bin/npx
+```
+
+测试node安装：
+
+```
+node -v
+npm
+npx
+```
+
 
 
 
