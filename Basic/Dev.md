@@ -15,6 +15,7 @@
   - [svn-git迁移](#svn-git迁移)
   - [rpm](#rpm)
   - [nodejs环境](#nodejs环境)
+  - [nginx服务器](#nginx服务器)
 
 <!-- /TOC -->
 
@@ -365,7 +366,30 @@ npm
 npx
 ```
 
+<a id="markdown-nginx服务器" name="nginx服务器"></a>
+## nginx服务器
 
+下载地址：http://nginx.org/packages/centos/7/x86_64/RPMS/
+
+执行安装命令：
+
+```shell
+rpm -ivh nginx-1.8.1-1.el7.ngx.x86_64.rpm
+```
+
+安装目录为：【/etc/nginx】，通过命令`nginx`启动后，通过ip访问即可看到Nginx的测试页面。
+
+常用命令：
+
+命令 | 功能
+---|---
+nginx | 启动
+nginx -s stop | 快速关闭
+nginx -s quit | 优雅的关闭，主进程会等待 worker 进程完成当前用户请求的处理
+nginx -t | 查看配置文件是否修改成功 (多用于配置文件修改之后)
+nginx -s reopen | 重新打开日志文件
+nginx -s reload | 重新启动
+nginx -c filename | 使用指定的配置文件 (default: /etc/nginx/nginx.conf)
 
 
 
