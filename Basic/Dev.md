@@ -49,7 +49,7 @@ vi /etc/profile
 export JAVA_HOME=/usr/lib/jvm/jdk1.8.0_202
 export JRE_HOME=${JAVA_HOME}/jre
 export CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib
-export  PATH=${JAVA_HOME}/bin:$PATH
+export PATH=${JAVA_HOME}/bin:$PATH
 ```
 
 执行【profile】，使之生效：
@@ -450,6 +450,20 @@ nohup java -jar jenkins.war --httpPort=18080
 重启jenkins，页面访问地址：http://ip:port/restart
 
 通常采用shell脚本方式进行启动和停止，方便操作，脚本如下：
+
+默认生成目录【/root/.jenkins】，修改环境变量调整至软件同路径，方便后续的备份及操作:
+
+```shell
+vi /etc/profile
+```
+
+增加以下内容：
+
+```shell
+export JENKINS_HOME=/usr/local/jenkins/.jenkins
+```
+
+`source /etc/profile`使修改生效
 
 ```shell
 #!/bin/bash
