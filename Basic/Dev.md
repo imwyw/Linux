@@ -16,6 +16,7 @@
   - [rpm](#rpm)
   - [nodejs环境](#nodejs环境)
   - [nginx服务器](#nginx服务器)
+  - [jenkins](#jenkins-1)
 
 <!-- /TOC -->
 
@@ -33,7 +34,6 @@ mkdir -p /usr/lib/jvm
 
 # 解压
 tar -zxvf jdk-8u202-linux-x64.tar.gz -C /usr/lib/jvm/
-
 ```
 
 - 环境变量的设置
@@ -44,8 +44,6 @@ vi /etc/profile
 ```
 
 在【profile】文件开头添加内容：
-
-
 
 ```bash
 export JAVA_HOME=/usr/lib/jvm/jdk1.8.0_202
@@ -215,6 +213,45 @@ gitlab-ce 离线下载地址：https://packages.gitlab.com/gitlab/gitlab-ce
 
 https://blog.csdn.net/a3512740/article/details/106620513
 
+gitlab依赖于policycoreutils-python，继而又依赖于以下包：
+
+```
+[root@KG-HRDG-34 gitlab]# rpm -ivh policycoreutils-python-2.5-34.el7.x86_64.rpm 
+警告：policycoreutils-python-2.5-34.el7.x86_64.rpm: 头V3 RSA/SHA256 Signature, 密钥 ID f4a80eb5: NOKEY
+错误：依赖检测失败：
+	audit-libs-python >= 2.1.3-4 被 policycoreutils-python-2.5-34.el7.x86_64 需要
+	checkpolicy 被 policycoreutils-python-2.5-34.el7.x86_64 需要
+	libapol.so.4()(64bit) 被 policycoreutils-python-2.5-34.el7.x86_64 需要
+	libapol.so.4(VERS_4.0)(64bit) 被 policycoreutils-python-2.5-34.el7.x86_64 需要
+	libcgroup 被 policycoreutils-python-2.5-34.el7.x86_64 需要
+	libqpol.so.1()(64bit) 被 policycoreutils-python-2.5-34.el7.x86_64 需要
+	libqpol.so.1(VERS_1.2)(64bit) 被 policycoreutils-python-2.5-34.el7.x86_64 需要
+	libqpol.so.1(VERS_1.4)(64bit) 被 policycoreutils-python-2.5-34.el7.x86_64 需要
+	libsemanage-python >= 2.5-14 被 policycoreutils-python-2.5-34.el7.x86_64 需要
+	policycoreutils = 2.5-34.el7 被 policycoreutils-python-2.5-34.el7.x86_64 需要
+	python-IPy 被 policycoreutils-python-2.5-34.el7.x86_64 需要
+	setools-libs >= 3.3.8-4 被 policycoreutils-python-2.5-34.el7.x86_64 需要
+```
+
+需要手动下载相关的rpm包，并执行`rpm -ivh xxxx.rpm`安装命令或`rpm -Uvh xxx.rpm --nodeps`升级命令
+
+总共需要下载以下rpm依赖包：
+
+```
+audit-2.8.5-4.el7.x86_64.rpm
+audit-libs-2.8.5-4.el7.x86_64.rpm
+audit-libs-python-2.8.5-4.el7.x86_64.rpm
+checkpolicy-2.5-8.el7.x86_64.rpm
+glibc-2.17-317.el7.x86_64.rpm
+glibc-common-2.17-317.el7.x86_64.rpm
+libcgroup-0.41-21.el7.x86_64.rpm
+libsemanage-python-2.5-14.el7.x86_64.rpm
+policycoreutils-2.5-34.el7.x86_64.rpm
+policycoreutils-python-2.5-34.el7.x86_64.rpm
+python-IPy-0.75-6.el7.noarch.rpm
+setools-libs-3.3.8-4.el7.x86_64.rpm
+```
+
 超级管理员：`root/Admin@123`
 
 ```shell
@@ -225,6 +262,8 @@ gitlab-ctl restart # 重启所有服务
 <a id="markdown-修改端口号" name="修改端口号"></a>
 ### 修改端口号
 默认端口号为80，可能会存在占用等情况，按如下修改端口，否则会出现502异常
+
+`vi /etc/gitlab/gitlab.rb`
 
 ```shell
 external_url 'http://192.168.217.100:10000'
@@ -391,5 +430,55 @@ nginx -s reopen | 重新打开日志文件
 nginx -s reload | 重新启动
 nginx -c filename | 使用指定的配置文件 (default: /etc/nginx/nginx.conf)
 
+<a id="markdown-jenkins-1" name="jenkins-1"></a>
+## jenkins
 
+下载地址： http://mirrors.jenkins-ci.org/
 
+默认端口：8080，默认JENKINS_HOME目录：`～/.jenkins`
+
+```shell
+# 前台启动命令
+java -jar jenkins.war
+
+# 后台启动命令
+nohup java -jar jenkins.war --httpPort=18080
+```
+
+关闭jenkins，页面访问地址：http://ip:port/exit
+
+重启jenkins，页面访问地址：http://ip:port/restart
+
+通常采用shell脚本方式进行启动和停止，方便操作，脚本如下：
+
+```shell
+#!/bin/bash
+### 主要目的用于开机启动服务,不然 启动jenkins.war包没有java -jar的权限
+JAVA_HOME=/usr/lib/jvm/jdk1.8.0_202
+JENKINS_HOME=/usr/local/jenkins/.jenkins 
+
+pid=`ps -ef | grep jenkins.war | grep -v 'grep'| awk '{print $2}'| wc -l`
+  if [ "$1" = "start" ];then
+  if [ $pid -gt 0 ];then
+  echo 'jenkins is running...'
+else
+  ### java启动服务 配置java安装根路径,和启动war包存的根路径
+  nohup $JAVA_HOME/bin/java -jar /usr/local/jenkins/jenkins.war --httpPort=18080  2>&1 &
+  fi
+  elif [ "$1" = "stop" ];then
+  exec ps -ef | grep jenkins | grep -v grep | awk '{print $2}'| xargs kill -9
+  echo 'jenkins is stop..'
+else
+  echo "Please input like this:"./jenkins.sh start" or "./jenkins stop""
+  fi
+```
+
+```shell
+# 第一次运行需要增加执行权限
+chmod +x /usr/local/jenkins/jenkins.sh
+chmod +x /usr/local/jenkins/jenkins.war
+
+/usr/local/jenkins/jenkins.sh stop
+
+/usr/local/jenkins/jenkins.sh stop
+```
