@@ -2,6 +2,8 @@
 
 - [开发相关环境](#开发相关环境)
   - [JDK配置](#jdk配置)
+  - [maven](#maven)
+    - [nexus搭建私服](#nexus搭建私服)
   - [tomcat配置](#tomcat配置)
   - [springboot部署](#springboot部署)
   - [内核升级](#内核升级)
@@ -17,6 +19,9 @@
   - [nodejs环境](#nodejs环境)
   - [nginx服务器](#nginx服务器)
   - [jenkins](#jenkins-1)
+    - [jenkins plugin 离线](#jenkins-plugin-离线)
+    - [执行shell](#执行shell)
+    - [结合gitlab定时构建](#结合gitlab定时构建)
 
 <!-- /TOC -->
 
@@ -60,6 +65,27 @@ source /etc/profile
 # 测试环境
 java -version
 ```
+
+<a id="markdown-maven" name="maven"></a>
+## maven
+
+https://archive.apache.org/dist/maven/maven-3/
+
+`vi /etc/profile`设置环境变量：
+
+```shell
+export MAVEN_HOME=/usr/local/maven/apache-maven-3.6.3
+export PATH=$MAVEN_HOME/bin:$PATH
+```
+
+<a id="markdown-nexus搭建私服" name="nexus搭建私服"></a>
+### nexus搭建私服
+
+https://www.cnblogs.com/knowledgesea/p/11190579.html
+
+
+
+
 
 <a id="markdown-tomcat配置" name="tomcat配置"></a>
 ## tomcat配置
@@ -496,3 +522,128 @@ chmod +x /usr/local/jenkins/jenkins.war
 
 /usr/local/jenkins/jenkins.sh stop
 ```
+
+
+<a id="markdown-jenkins-plugin-离线" name="jenkins-plugin-离线"></a>
+### jenkins plugin 离线
+
+插件索引：https://plugins.jenkins.io/
+
+下载地址：http://updates.jenkins-ci.org/download/plugins/
+
+或者在可以联网环境下载plugin依赖，然后将依赖拷贝至指定服务器的指定repository路径。
+
+
+
+
+<a id="markdown-执行shell" name="执行shell"></a>
+### 执行shell
+
+jenkins job 执行 mvn 命令时会报 “未知命令”，需要添加 `#!/bin/sh -l` 命令修改为登录方式即可解决问题
+
+执行mvn打包命令：
+
+```shell
+#!/bin/sh -l
+# 离线打包模式，需要提前将依赖拷贝至离线服务器（TODO临时方案）
+mvn -o clean package
+```
+
+执行发布命令：
+
+```shell
+#!/bin/bash
+#这里可替换为你自己的执行程序，其他代码无需更改
+JAR_NAME=$2
+APP_NAME=/opt/workspace/kg-cloud-publish/${JAR_NAME}
+
+#使用说明，用来提示输入参数
+usage() {
+    echo "Usage: sh deploy.sh [start|stop|restart|status] xxxx.jar"
+    exit 1
+}
+
+#检查程序是否在运行
+is_exist() {
+    pid=`ps -ef | grep $APP_NAME | grep -v grep | awk '{print $2}' `
+    #如果不存在返回1，存在返回0
+    if [ -z "${pid}" ]; then
+      return 1
+    else
+      return 0
+    fi
+}
+
+#启动方法
+start() {
+   is_exist
+   if [ $? -eq "0" ]; then
+     echo "${APP_NAME} is already running. pid=${pid} ."
+   else
+     nohup java -Dfile.encoding=utf-8 -jar $APP_NAME > ${JAR_NAME}.log 2>&1 &
+	 echo "${APP_NAME} is running."
+   fi
+}
+
+#停止方法
+stop() {
+   is_exist
+   if [ $? -eq "0" ]; then
+     kill -9 $pid
+	 echo "kill success!"
+   else
+     echo "${APP_NAME} is not running"
+   fi
+}
+
+#输出运行状态
+status() {
+   is_exist
+   if [ $? -eq "0" ]; then
+     echo "${APP_NAME} is running. Pid is ${pid}"
+   else
+     echo "${APP_NAME} is not running."
+   fi
+}
+
+#重启
+restart() {
+   stop
+   start
+}
+
+#根据输入参数，选择执行对应方法，不输入则执行使用说明
+case "$1" in
+   "start")
+     start
+     ;;
+   "stop")
+     stop
+     ;;
+   "status")
+     status
+     ;;
+   "restart")
+     restart
+     ;;
+   *)
+     usage
+     ;;
+esac
+
+```
+
+调用方式：
+
+```shell
+# 启动/停止/查看状态，相应日志为 xxxx.jar.log
+sh deploy.sh start/stop/status xxxx.jar
+```
+
+
+
+<a id="markdown-结合gitlab定时构建" name="结合gitlab定时构建"></a>
+### 结合gitlab定时构建
+
+https://www.cnblogs.com/yanjieli/p/10613212.html
+
