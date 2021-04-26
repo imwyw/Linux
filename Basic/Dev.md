@@ -22,6 +22,7 @@
     - [jenkins plugin 离线](#jenkins-plugin-离线)
     - [执行shell](#执行shell)
     - [结合gitlab定时构建](#结合gitlab定时构建)
+  - [telnet](#telnet)
 
 <!-- /TOC -->
 
@@ -646,4 +647,21 @@ sh deploy.sh start/stop/status xxxx.jar
 ### 结合gitlab定时构建
 
 https://www.cnblogs.com/yanjieli/p/10613212.html
+
+
+<a id="markdown-telnet" name="telnet"></a>
+## telnet
+参考：
+
+https://blog.csdn.net/weixin_43054437/article/details/106379711
+
+
+安装顺序：xinetd-->telnet-->telnet-server
+
+如果只需要使用telnet，只要安装telnet即可
+
+```shell
+# 按顺序安装
+rpm -ivh xxxx.rpm
+```
 
