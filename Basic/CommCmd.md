@@ -119,7 +119,7 @@ uname -a
 # 查看内核/操作系统/CPU信息
 head -n 1 /etc/issue   # 查看操作系统版本
 cat /proc/cpuinfo      # 查看CPU信息
-lscpu                  # 显示cpu相关信息
+lscpu                  # 显示CPU相关信息
 hostname               # 查看计算机名
 lspci -tv              # 列出所有PCI设备
 lsusb -tv              # 列出所有USB设备
