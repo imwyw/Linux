@@ -104,11 +104,11 @@ vi /etc/sysconfig/network-scripts/ifcfg-ens33
 #显示简略信息
 ls
 
-#显示权限
-ls -l = ls -lrt = ll
+# 显示文件信息
+ll
 
-#显示权限包含隐藏文件
-ls -la
+# 显示文件信息，包含隐藏文件
+ll -a
 
 #显示路径
 pwd
@@ -119,22 +119,23 @@ uname -a
 # 查看内核/操作系统/CPU信息
 head -n 1 /etc/issue   # 查看操作系统版本
 cat /proc/cpuinfo      # 查看CPU信息
-lscpu                  # 显示CPU相关信息
-hostname               # 查看计算机名
+lscpu                  # 显示CPU相关信息 ***
+hostname               # 查看计算机名 ***
 lspci -tv              # 列出所有PCI设备
 lsusb -tv              # 列出所有USB设备
 lsmod                  # 列出加载的内核模块
 env                    # 查看环境变量 
 
 #资源
-free -m                # 查看内存使用量和交换区使用量
+free -m                # 查看内存使用量和交换区使用量 ***
 df -h                  # 查看各分区使用情况
-du -sh <目录名>        # 查看指定目录的大小
+du -sh <目录名> *      # 查看指定目录内各文件夹大小 ***
+du -sh <目录名>        # 查看指定目录内大小 ***
 grep MemTotal /proc/meminfo   # 查看内存总量
 grep MemFree /proc/meminfo    # 查看空闲内存量
 uptime                 # 查看系统运行时间、用户数、负载
 cat /proc/loadavg      # 查看系统负载
- 
+
 #磁盘和分区
 mount | column -t      # 查看挂接的分区状态
 fdisk -l               # 查看所有分区
